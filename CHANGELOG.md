@@ -186,7 +186,11 @@ Current
 
 ### Deprecated:
 
-- [`RequestLog::switchTiming` has been deprecated]((https://github.com/yahoo/fili/pull/141)
+- [`RequestLog::stopMostRecentTimer` has been deprecated](https://github.com/yahoo/fili/pull/143)
+    - This method is a part of the infrastructure to support the recently
+    deprecated `RequestLog::switchTiming`.
+
+- [`RequestLog::switchTiming` has been deprecated](https://github.com/yahoo/fili/pull/141)
     - `RequestLog::switchTiming` is very context-dependent, and therefore brittle. In particular, adding any
         additional timers inside code called by a timed block may result in the original timer not stopping
         properly. All usages of `switchTiming` should be replaced with explicit calls to `RequestLog::startTiming`

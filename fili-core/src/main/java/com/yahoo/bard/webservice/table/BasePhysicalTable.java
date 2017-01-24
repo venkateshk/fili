@@ -140,7 +140,7 @@ public abstract class BasePhysicalTable implements PhysicalTable {
      */
     @Override
     public Map<Column, List<Interval>> getAvailableIntervals() {
-        return getAvailability();
+        return getAvailability().getIdealAvailability();
     }
     /**
      * Get the time grain from granularity.

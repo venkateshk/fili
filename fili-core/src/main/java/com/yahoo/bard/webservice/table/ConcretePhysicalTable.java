@@ -6,7 +6,7 @@ import com.yahoo.bard.webservice.data.dimension.DimensionDictionary;
 import com.yahoo.bard.webservice.data.time.ZonedTimeGrain;
 import com.yahoo.bard.webservice.metadata.SegmentMetadata;
 import com.yahoo.bard.webservice.table.availability.Availability;
-import com.yahoo.bard.webservice.table.availability.ImmutableAvailability;
+import com.yahoo.bard.webservice.table.availability.SimpleAvailability;
 
 import org.joda.time.Interval;
 
@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
  */
 public class ConcretePhysicalTable extends BasePhysicalTable {
 
-    private volatile Availability availability = new ImmutableAvailability(Collections.emptyMap());
+    private volatile Availability availability = new SimpleAvailability(Collections.emptyMap());
     private final String factTableName;
 
     /**
@@ -80,11 +80,15 @@ public class ConcretePhysicalTable extends BasePhysicalTable {
     public void resetColumns(SegmentMetadata segmentMetadata, DimensionDictionary dimensionDictionary) {
         Map<String, Set<Interval>> dimensionIntervals = segmentMetadata.getDimensionIntervals();
         Map<String, Set<Interval>> metricIntervals = segmentMetadata.getMetricIntervals();
-        setAvailability(new ImmutableAvailability(schema, dimensionIntervals, metricIntervals, dimensionDictionary));
+        setAvailability(new SimpleAvailability(dimensionIntervals, metricIntervals, dimensionDictionary));
     }
 
     public void setAvailability(Map<Column, List<Interval>> availability) {
-        this.availability = new ImmutableAvailability(availability);
+        setAvailability(new SimpleAvailability(availability));
+    }
+
+    public synchronized void setAvailability(Availability availability) {
+        this.availability = availability;
     }
 
     @Override

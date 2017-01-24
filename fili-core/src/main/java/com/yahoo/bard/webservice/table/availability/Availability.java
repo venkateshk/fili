@@ -6,14 +6,40 @@ import com.yahoo.bard.webservice.table.Column;
 
 import org.joda.time.Interval;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Availability describes the intervals available by column for a table.
  */
-public interface Availability extends Map<Column, List<Interval>> {
+public interface Availability {
+
+    List<Interval> get(Column column);
+
+    default Supplier<List<Interval>> getAvailabilitySupplier(Column column) {
+        return () -> get(column);
+    }
+
+    Collection<List<Interval>> values();
+
+    Set<Column> keySet();
+
+    default Map<Column, List<Interval>> getIdealAvailability() {
+        return keySet().stream()
+                .collect(Collectors.toMap(Function.identity(), this::get));
+    }
+
+    default Map<Column, Supplier<List<Interval>>> getFilteredAvailabilitySupplier(Class<? extends Column> columnClass) {
+        return keySet().stream()
+                .filter(it-> columnClass.isAssignableFrom(it.getClass()))
+                .collect(Collectors.toMap(Function.identity(), this::getAvailabilitySupplier));
+    }
 
     /**
      * Fetch a set of intervals given a column name.

@@ -265,7 +265,7 @@ public class QueryBuildingTestingResources {
         ConcretePhysicalTable table1 = ConcretePhysicalTable("name", DAY, columns, [:] )
 
         Map<Column, List<Interval>> availableMap = columns.collectEntries { [(it): [interval2] ]}
-        table1.setAvailability(new ImmutableAvailability(availableMap))
+        table1.setAvailability(new SimpleAvailability(availableMap))
          */
         setupPartialData()
     }
